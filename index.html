@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePass Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>🔐 SecurePass Generator</h1>
+        <p>Crie senhas fortes, aleatórias e seguras em segundos.</p>
+
+        <button id="themeBtn">🌙 Tema Escuro</button>
+    </div>
+</header>
+
+<main class="container">
+
+<section class="card">
+
+<h2>Gerador de Senhas</h2>
+
+<div class="password-box">
+
+<input
+type="text"
+id="password"
+placeholder="Sua senha aparecerá aqui"
+readonly>
+
+<button onclick="copyPassword()">
+📋 Copiar
+</button>
+
+</div>
+
+<div class="strength">
+
+<h3>Força da Senha</h3>
+
+<div class="strength-bar">
+
+<div
+id="strengthBar">
+</div>
+
+</div>
+
+<p id="strengthText">
+Nenhuma senha gerada.
+</p>
+
+</div>
+
+<hr>
+
+<div class="options">
+
+<h3>Configurações</h3>
+
+<label>
+
+Comprimento
+
+<span id="lengthValue">16</span>
+
+</label>
+
+<input
+type="range"
+min="6"
+max="64"
+value="16"
+id="length">
+
+<label>
+
+<input
+type="checkbox"
+id="uppercase"
+checked>
+
+Letras Maiúsculas
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="lowercase"
+checked>
+
+Letras Minúsculas
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="numbers"
+checked>
+
+Números
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="symbols"
+checked>
+
+Símbolos
+
+</label>
+
+<label>
+
+<input
+type="checkbox"
+id="similar">
+
+Excluir caracteres semelhantes (O,0,I,l)
+
+</label>
+
+<button class="generate"
+onclick="generatePassword()">
+
+Gerar Senha
+
+</button>
+
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>Histórico</h2>
+
+<ul id="history">
+
+<li>Nenhuma senha gerada.</li>
+
+</ul>
+
+</section>
+
+<section class="card">
+
+<h2>Dicas</h2>
+
+<ul>
+
+<li>✔ Utilize pelo menos 16 caracteres.</li>
+
+<li>✔ Misture letras, números e símbolos.</li>
+
+<li>✔ Nunca reutilize senhas.</li>
+
+<li>✔ Utilize um gerenciador de senhas.</li>
+
+<li>✔ Ative autenticação em dois fatores.</li>
+
+</ul>
+
+</section>
+
+</main>
+
+<footer>
+
+<p>
+
+© 2026 SecurePass Generator
+
+</p>
+
+</footer>
+
+<script>
+
+const password=document.getElementById("password");
+const history=document.getElementById("history");
+const length=document.getElementById("length");
+const lengthValue=document.getElementById("lengthValue");
+const bar=document.getElementById("strengthBar");
+const text=document.getElementById("strengthText");
+
+length.oninput=()=>{
+lengthValue.innerHTML=length.value;
+}
+
+function generatePassword(){
+
+let chars="";
+
+const upper="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const lower="abcdefghijklmnopqrstuvwxyz";
+
+const numbers="0123456789";
+
+const symbols="!@#$%&*()_+-=[]{}<>?";
+
+if(uppercase.checked) chars+=upper;
+
+if(lowercase.checked) chars+=lower;
+
+if(numbers.checked) chars+=numbers;
+
+if(symbols.checked) chars+=symbols;
+
+if(similar.checked){
+
+chars=chars.replace(/[O0Il]/g,'');
+
+}
+
+if(chars===""){
+
+alert("Selecione pelo menos uma opção.");
+
+return;
+
+}
+
+let array=new Uint32Array(length.value);
+
+crypto.getRandomValues(array);
+
+let result="";
+
+array.forEach(n=>{
+
+result+=chars[n%chars.length];
+
+});
+
+password.value=result;
+
+history.innerHTML=
+"<li>"+result+"</li>"+history.innerHTML;
+
+checkStrength(result);
+
+}
+
+function checkStrength(pass){
+
+let score=0;
+
+if(pass.length>=12) score++;
+
+if(pass.length>=16) score++;
+
+if(/[A-Z]/.test(pass)) score++;
+
+if(/[0-9]/.test(pass)) score++;
+
+if(/[!@#$%&*()_+\-\=\[\]\{\}<>\?]/.test(pass)) score++;
+
+let width=(score/5)*100;
+
+bar.style.width=width+"%";
+
+if(score<=2){
+
+bar.style.background="red";
+
+text.innerHTML="Fraca";
+
+}
+
+else if(score<=4){
+
+bar.style.background="orange";
+
+text.innerHTML="Média";
+
+}
+
+else{
+
+bar.style.background="limegreen";
+
+text.innerHTML="Muito Forte";
+
+}
+
+}
+
+function copyPassword(){
+
+navigator.clipboard.writeText(password.value);
+
+alert("Senha copiada!");
+
+}
+
+themeBtn.onclick=()=>{
+
+document.body.classList.toggle("dark");
+
+};
+
+generatePassword();
+
+</script>
+
+</body>
+</html>
